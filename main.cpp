@@ -2,7 +2,7 @@
  * @Author: Ivan Chichvarin ichichvarin@humanplus.ru
  * @Date: 2024-05-18 17:31:00
  * @LastEditors: Ivan Chichvarin ichichvarin@humanplus.ru
- * @LastEditTime: 2024-05-18 17:35:07
+ * @LastEditTime: 2024-05-19 22:38:28
  * @FilePath: /Json/main.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -38,8 +38,15 @@ string FindMostExpensiveCategory(const vector<Spending>& spendings) {
 }
 
 vector<Spending> LoadFromJson(istream& input) {
-    // место для вашей реализации
-    // пример корректного JSON-документа в условии
+    vector<Spending> ret_val;
+    
+    Document in_json = Load(input);
+    ret_val.reserve(in_json.GetRoot().AsArray().size());
+    
+    for(const Node& node : in_json.GetRoot().AsArray()){
+        ret_val.push_back({node.AsMap().at("category"s).AsString(), node.AsMap().at("amount"s).AsInt()});
+    }
+    return ret_val;
 }
 
 int main() {
