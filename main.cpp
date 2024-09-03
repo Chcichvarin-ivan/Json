@@ -2,7 +2,7 @@
  * @Author: Ivan Chichvarin ichichvarin@humanplus.ru
  * @Date: 2024-05-18 17:31:00
  * @LastEditors: Ivan Chichvarin ichichvarin@humanplus.ru
- * @LastEditTime: 2024-05-19 22:38:28
+ * @LastEditTime: 2024-08-19 09:46:22
  * @FilePath: /Json/main.cpp
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -12,8 +12,15 @@
 #include <numeric>
 #include <vector>
 
-// не меняйте файлы json.h и json.cpp
+
+#include <cassert>
+#include <chrono>
+#include <sstream>
+#include <string_view>
+
 #include "json.h"
+
+#include "tests.h"
 
 using namespace std;
 
@@ -40,17 +47,26 @@ string FindMostExpensiveCategory(const vector<Spending>& spendings) {
 vector<Spending> LoadFromJson(istream& input) {
     vector<Spending> ret_val;
     
-    Document in_json = Load(input);
+    json::Document in_json = json::Load(input);
     ret_val.reserve(in_json.GetRoot().AsArray().size());
     
-    for(const Node& node : in_json.GetRoot().AsArray()){
+    for(const json::Node& node : in_json.GetRoot().AsArray()){
         ret_val.push_back({node.AsMap().at("category"s).AsString(), node.AsMap().at("amount"s).AsInt()});
     }
     return ret_val;
 }
 
+
 int main() {
-    // не меняйте main
+    TestNull();
+    TestNumbers();
+    TestStrings();
+    TestBool();
+    TestArray();
+    TestMap();
+    TestErrorHandling();
+    Benchmark();
+
     const vector<Spending> spendings = LoadFromJson(cin);
     cout << "Total "sv << CalculateTotalSpendings(spendings) << '\n';
     cout << "Most expensive is "sv << FindMostExpensiveCategory(spendings) << '\n';
